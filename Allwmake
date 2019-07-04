@@ -1,0 +1,18 @@
+#!/bin/bash
+
+clear
+
+cd src/schemes_vc
+./compile
+
+cd ../mathematics_vc
+./compile
+
+cd ../models_vc
+./compile
+
+cd ../../applications/solvers/solidVertexFoam
+./compile
+
+cd ../../utilities/initialConditions_vc
+./compile
