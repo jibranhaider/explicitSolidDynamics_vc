@@ -71,7 +71,7 @@ int main(int argc, char *argv[])
     );
 
     // Test case name
-    const word& testCase(mechanicalProperties.lookup("testCase"));
+    const word& tutorial(runParameters.lookup("tutorial"));
 
     // Read density
     const dimensionedScalar& rho(mechanicalProperties.lookup("rho"));
@@ -95,7 +95,7 @@ int main(int argc, char *argv[])
     );
 
     // Non uniform angular velocity initialsed testcases
-    if (testCase == "twistingColumn")
+    if (tutorial == "twistingColumn")
     {
         pointVectorField omega
         (
