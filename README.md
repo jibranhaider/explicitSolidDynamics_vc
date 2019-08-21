@@ -39,7 +39,7 @@ This toolkit is based on a vertex centred Finite Volume Method to predict large 
 <br/>
 
 #### Preprocessing
-<img src="/docs/results/preprocessing/median_dual.png" width="80%">
+<img src="docs/preprocessing/median_dual.png" width="100%">
 
 <br/>
 
