@@ -2,17 +2,22 @@
 
 clear
 
+printf "Compiling schemes_vc\n"
 cd src/schemes_vc
-./compile
+wclean libso && wmake libso
 
+printf "\nCompiling mathematics_vc module\n"
 cd ../mathematics_vc
-./compile
+wclean libso && wmake libso
 
+printf "\nCompiling models_vc\n"
 cd ../models_vc
-./compile
+wclean libso && wmake libso
 
+printf "\nCompiling solidVertexFoam solver\n"
 cd ../../applications/solvers/solidVertexFoam
-./compile
+wclean && wmake
 
+printf "\nCompiling initial conditions\n"
 cd ../../utilities/initialConditions_vc
-./compile
+wclean && wmake
