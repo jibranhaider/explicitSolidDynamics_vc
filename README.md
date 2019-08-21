@@ -44,12 +44,12 @@ This toolkit is based on a vertex centred Finite Volume Method to predict large 
 <br/>
 
 #### Results
-<img src="/docs/results/twistingColumn/0.png" width="13%"> &nbsp; &nbsp; &nbsp; &nbsp;
-<img src="/docs/results/twistingColumn/2.png" width="13%"> &nbsp; &nbsp; &nbsp; &nbsp;
-<img src="/docs/results/twistingColumn/4.png" width="13%"> &nbsp; &nbsp; &nbsp; &nbsp;
-<img src="/docs/results/twistingColumn/6.png" width="13%"> &nbsp; &nbsp; &nbsp; &nbsp;
-<img src="/docs/results/twistingColumn/8.png" width="13%"> &nbsp; &nbsp; &nbsp; &nbsp;
-<img src="/docs/results/twistingColumn/10.png" width="13%">
+<img src="/docs/results/twistingColumn/0.png" width="12%"> &nbsp; &nbsp; &nbsp; &nbsp;
+<img src="/docs/results/twistingColumn/2.png" width="12%"> &nbsp; &nbsp; &nbsp; &nbsp;
+<img src="/docs/results/twistingColumn/4.png" width="12%"> &nbsp; &nbsp; &nbsp; &nbsp;
+<img src="/docs/results/twistingColumn/6.png" width="12%"> &nbsp; &nbsp; &nbsp; &nbsp;
+<img src="/docs/results/twistingColumn/8.png" width="12%"> &nbsp; &nbsp; &nbsp; &nbsp;
+<img src="/docs/results/twistingColumn/10.png" width="12%">
 
 <br/>
 <hr> 
