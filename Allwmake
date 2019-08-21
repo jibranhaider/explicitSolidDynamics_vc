@@ -1,23 +1,19 @@
+
 #!/bin/bash
 
 clear
 
-printf "Compiling schemes_vc\n"
 cd src/schemes_vc
-wclean libso && wmake libso
+./compile
 
-printf "\nCompiling mathematics_vc module\n"
 cd ../mathematics_vc
-wclean libso && wmake libso
+./compile
 
-printf "\nCompiling models_vc\n"
 cd ../models_vc
-wclean libso && wmake libso
+./compile
 
-printf "\nCompiling solidVertexFoam solver\n"
 cd ../../applications/solvers/solidVertexFoam
-wclean && wmake
+./compile
 
-printf "\nCompiling initial conditions\n"
 cd ../../utilities/initialConditions_vc
-wclean && wmake
+./compile

@@ -1,7 +1,7 @@
 EXE_INC = \
-	-I$(WM_PROJECT_USER_DIR)/../src/models_vc/lnInclude \
-	-I$(WM_PROJECT_USER_DIR)/../src/schemes_vc/lnInclude \
-	-I$(WM_PROJECT_USER_DIR)/../src/mathematics_vc/lnInclude \
+	-I$(PWD)/../../../src/models_vc/lnInclude \
+	-I$(PWD)/../../../src/schemes_vc/lnInclude \
+	-I$(PWD)/../../../src/mathematics_vc/lnInclude \
 	-I$(LIB_SRC)/finiteVolume/lnInclude \
 	-I$(LIB_SRC)/meshTools/lnInclude
 
