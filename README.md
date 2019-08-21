@@ -4,14 +4,52 @@
 </p></h1>
 
 
+
+<p align="center"> 
+  <a href="https://travis-ci.org/jibranhaider/explicitSolidDynamics_vc" target="_blank">
+    <img alt="Travis (.org)" src="https://img.shields.io/travis/jibranhaider/explicitsoliddynamics_vc"> &nbsp;
+  </a>  
+  <img alt="OpenFOAM 6" src="https://img.shields.io/badge/OpenFOAM-v7_| v6_| v5_| v4-darkgreen.svg"> &nbsp;
+  <a href="https://github.com/jibranhaider/explicitSolidDynamics/blob/master/LICENSE">
+    <img alt="GPLv3 license" src="https://img.shields.io/badge/License-GPLv3-orange.svg"> &nbsp;
+  </a> 
+  <a href="https://openfoam.org/dev/coding-style-guide">
+  <img alt="Code style" src="https://img.shields.io/badge/Coding_style-OpenFOAM-yellow.svg"> 
+  </a>    
+</p>
+
+<p align="center">   
+  <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/jibranhaider/explicitsoliddynamics_vc"> &nbsp;
+  <img alt="GitHub code size in bytes" src="https://img.shields.io/github/languages/code-size/jibranhaider/explicitsoliddynamics_vc?color=lightgrey"> &nbsp;
+  <img alt="GitHub repo size in bytes" src="https://img.shields.io/github/repo-size/jibranhaider/explicitsoliddynamics_vc?label=Repository%20size&color=lightgrey"> &nbsp;
+  <a href="https://jibranhaider.weebly.com/research.html">
+    <img alt="Website" src="https://img.shields.io/website-up-down-green-red/https/jibranhaider.weebly.com/research.html.svg?label=Website"> 
+  </a>  
+</p>
+
+
 <br/>
 
 ## 1. Introduction    
 
 <p align="justify">
-This toolkit is based on a vertex centred Finite Volume Method to predict large deformation in solids. The governing equations comprise of first order hyperbolic conservation laws for linear momentum and deformation gradient tensor of the system. This helps to bridge the gap between Computational Fluid Dynamics and Computational Solid Dynamics. The governing equations are spatially discretised using a low order vetex centred Finite Volume Method along with an upwind Riemann solver. 
+This toolkit is based on a vertex centred Finite Volume Method to predict large deformation in solids. The governing equations comprise of a system of first order hyperbolic conservation laws for linear momentum and deformation gradient tensor. This helps to bridge the gap between Computational Fluid Dynamics and Computational Solid Dynamics.
 </p> 
 
+<br/>
+
+#### Preprocessing
+<img src="/docs/results/preprocessing/median_dual.png" width="80%">
+
+<br/>
+
+#### Results
+<img src="/docs/results/twistingColumn/0.png" width="13%"> &nbsp; &nbsp; &nbsp; &nbsp;
+<img src="/docs/results/twistingColumn/2.png" width="13%"> &nbsp; &nbsp; &nbsp; &nbsp;
+<img src="/docs/results/twistingColumn/4.png" width="13%"> &nbsp; &nbsp; &nbsp; &nbsp;
+<img src="/docs/results/twistingColumn/6.png" width="13%"> &nbsp; &nbsp; &nbsp; &nbsp;
+<img src="/docs/results/twistingColumn/8.png" width="13%"> &nbsp; &nbsp; &nbsp; &nbsp;
+<img src="/docs/results/twistingColumn/10.png" width="13%">
 
 <br/>
 <hr> 
@@ -33,6 +71,7 @@ The structure of this repository is similar to the [explicitSolidDynamics](https
 
 #### What additional features can we expect in future releases?
 * Advanced constitutive models including plasticity, thermo/visco-elasticity.
+* Quasi-static formulation.
 * Multiple body contact problems.
 
 
@@ -55,3 +94,4 @@ This toolkit is released under the GNU General Public License (version 3). More 
 
 ## 6. Disclaimer
 This offering is not approved or endorsed by OpenCFD Limited, producer and distributor of the OpenFOAM software via www.openfoam.com, and owner of the OPENFOAM® and OpenCFD® trade marks.
+
