@@ -13,6 +13,19 @@ IOdictionary mechanicalProperties
     )
 );
 
+// Run parameters
+IOdictionary runParameters
+(
+     IOobject
+    (
+        "runParameters",
+        runTime.constant(),
+        mesh,
+        IOobject::MUST_READ_IF_MODIFIED,
+        IOobject::NO_WRITE
+    )
+);
+
 // Control dictionary
 IOdictionary controlDict
 (
@@ -41,6 +54,11 @@ IOdictionary fvSolution
 
 
 Info << "Reading data from dictionaries ..." << endl;
+
+// Boundary traction
+const vector& traction =
+    runParameters.lookupOrDefault<vector>("traction", vector::zero);
+
 
 // Type of time stepping
 const word& timeStepping = controlDict.lookup("timeStepping");

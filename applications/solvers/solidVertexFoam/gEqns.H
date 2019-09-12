@@ -54,6 +54,12 @@ forAll(mesh.boundary(), patch)
                 t2 = vector::zero;
                 t3 = vector::zero;
             }
+            if (patch == tractionPatchID)
+            {
+                t1 = traction;
+                t2 = traction;
+                t3 = traction;
+            }
 
             vector tC = 0.125*(6.0*t1 + t2 + t3);
             vector lmC = 0.125*(6.0*lm1 + lm2 + lm3);
