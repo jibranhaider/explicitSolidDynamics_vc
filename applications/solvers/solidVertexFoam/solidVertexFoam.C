@@ -23,7 +23,7 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Application
-    mixedSolidFoam
+    solidVertexFoam
 
 Description
     A large strain solid mechanics solver based on a linear momentum/strains
@@ -56,7 +56,6 @@ int main(int argc, char *argv[])
 
     while (runTime.loop())
     {
-
         if (timeStepping == "variable")
         {
             deltaT = (cfl*h)/model.Up();
