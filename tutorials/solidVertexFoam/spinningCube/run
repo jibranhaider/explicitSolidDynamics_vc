@@ -1,0 +1,17 @@
+#!/bin/bash
+cd ${0%/*} || exit 1 # Run from this directory
+
+# OpenFOAM functions
+. $WM_PROJECT_DIR/bin/tools/RunFunctions
+solver=`getApplication`
+
+# Generate mesh
+meshFile=$(grep '^meshFile.*;$' constant/runParameters | sed -e 's/meshFile\(.*\);/\1/')
+gmshToFoam $meshFile
+
+# Specify initial conditions
+initialConditions_vc
+	
+# Run solver
+$solver > log.$solver &
+tail -f log.$solver

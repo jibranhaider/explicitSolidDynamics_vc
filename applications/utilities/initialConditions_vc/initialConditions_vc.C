@@ -95,7 +95,7 @@ int main(int argc, char *argv[])
     );
 
     // Non uniform angular velocity initialsed testcases
-    if (tutorial == "twistingColumn")
+    if (tutorial == "twistingColumn" || tutorial == "spinningCube")
     {
         pointVectorField omega
         (
@@ -104,14 +104,24 @@ int main(int argc, char *argv[])
             dimensionedVector(runParameters.lookup("initialAngularVelocity"))
         );
 
-        const scalar& PI = Foam::constant::mathematical::pi;
-        dimensionedScalar height("height", dimensionSet(0,1,0,0,0,0,0), 6.0);
-
-        forAll(mesh.points(), nodeID)
+        if (tutorial == "twistingColumn")
         {
-            lm[nodeID] =
-                rho.value()*(omega[nodeID]
-               *Foam::sin(PI*X[nodeID].y()/(2*height.value()))) ^ X[nodeID];
+            const scalar& PI = Foam::constant::mathematical::pi;
+            dimensionedScalar height("height", dimensionSet(0,1,0,0,0,0,0), 6.0);
+
+            forAll(mesh.points(), node)
+            {
+                //lm[node] =
+                //    rho.value()*(omega[node]
+                //   *Foam::sin(PI*X[node].y()/(2*height.value()))) ^ X[node];
+
+                omega[node] *= Foam::sin(PI*X[node].y()/(2*height.value()));
+            }
+        }
+
+        forAll(mesh.points(), node)
+        {
+            lm[node] = rho.value()*omega[node] ^ X[node];
         }
     }
 
