@@ -98,7 +98,8 @@ public:
                 GeometricField<vector, pointPatchField, pointMesh>&,
                 const GeometricField<vector, pointPatchField, pointMesh>&,
                 const vectorList&,
-                scalar
+                scalar,
+                const GeometricField<scalar, pointPatchField, pointMesh>&
             ) const;
 
         // Print
@@ -107,7 +108,8 @@ public:
             void printGlobalMomentum
             (
                 const GeometricField<vector, pointPatchField, pointMesh>&,
-                const GeometricField<vector, pointPatchField, pointMesh>&
+                const GeometricField<vector, pointPatchField, pointMesh>&,
+                const GeometricField<scalar, pointPatchField, pointMesh>&
             ) const;
 
 };

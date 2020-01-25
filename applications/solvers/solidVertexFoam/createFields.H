@@ -246,7 +246,7 @@ Info << "Printing data ..." << endl;
 model.printMaterialProperties();
 
 // // Print global linear and angular momentum
-am.printGlobalMomentum(lm,x);
+am.printGlobalMomentum(lm,x,V);
 
 // Print centroid of mesh
 dual.printPrimalMeshCentroid();

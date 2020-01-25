@@ -6,12 +6,6 @@ x += deltaT*(lm/rho);
 rhsLm.primitiveFieldRef() = op.surfaceIntegrate(tC*magSf);
 rhsF.primitiveFieldRef() = op.surfaceIntegrate((lmC/rho.value())*Sf);
 
-if (angularMomentumConservation == "yes")
-{
-    rhsAm.primitiveFieldRef() = op.surfaceIntegrate((xe^tC)*magSf);
-    am.AMconservation(rhsLm, rhsLm1, rhsAm, xe, i);
-}
-
 forAll(mesh.boundary(), patch)
 {
     forAll(mesh.boundaryMesh()[patch], facei)
@@ -75,6 +69,16 @@ forAll(mesh.points(), node)
 {
     rhsLm[node] = rhsLm[node]/V[node];
     rhsF[node] = rhsF[node]/V[node];
+}
+
+if (angularMomentumConservation == "yes")
+{
+    rhsAm.primitiveFieldRef() = op.surfaceIntegrate((xe^tC)*magSf);
+    forAll(mesh.points(), node)
+    {
+        rhsAm[node] = rhsAm[node]/V[node];
+    }
+    am.AMconservation(rhsLm, rhsLm1, rhsAm, xe, i, V);
 }
 
 lm += deltaT*rhsLm;

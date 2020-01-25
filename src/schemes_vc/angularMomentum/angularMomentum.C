@@ -63,7 +63,8 @@ void angularMomentum::AMconservation
 	GeometricField<vector, pointPatchField, pointMesh>& rhsLm1,
 	const GeometricField<vector, pointPatchField, pointMesh>& rhsAm,
     const vectorList& xe,
-	scalar RKstage
+	scalar RKstage,
+    const GeometricField<scalar, pointPatchField, pointMesh>& V
 ) const
 {
 
@@ -136,17 +137,19 @@ void angularMomentum::AMconservation
 	forAll(mesh_.points(), node)
 	{
 		K_LL +=
-            ((xAM[node] & xAM[node])*tensor::I - (xAM[node]*xAM[node]));
+            V[node]
+           *((xAM[node] & xAM[node])*tensor::I - (xAM[node]*xAM[node]));
 
-        K_LB += tensor(0, -xAM[node].z(), xAM[node].y(), xAM[node].z(), 0, -xAM[node].x(), -xAM[node].y(), xAM[node].x(), 0);
+        K_LB +=
+            V[node]
+           *tensor(0, -xAM[node].z(), xAM[node].y(), xAM[node].z(), 0, -xAM[node].x(), -xAM[node].y(), xAM[node].x(), 0);
 
-        K_BB += -1.0;
+        K_BB += -V[node];
 
         R_L +=
-            (rhsAm[node])
-          + (rhsLm[node] ^ xAM[node]);
+            (V[node]*rhsAm[node])
+          + ((V[node]*rhsLm[node]) ^ xAM[node]);
 	}
-
 
 	if (Pstream::parRun())
 	{
@@ -155,7 +158,6 @@ void angularMomentum::AMconservation
 		reduce(K_BB, sumOp<scalar>());
 		reduce(R_L, sumOp<vector>());
 	}
-
 
 	tensor LHS = K_LL - ((K_LB & K_LB)/K_BB);
     vector RHS = R_L;
@@ -168,8 +170,7 @@ void angularMomentum::AMconservation
 		rhsLm[node] = rhsLm[node] + (lambda ^ xAM[node]) + beta;
 	}
 
-
-	if (RKstage == 1)
+	if (RKstage == 0)
 	{
 		rhsLm1 = rhsLm;
 	}
@@ -190,18 +191,19 @@ void angularMomentum::AMconservation
 void angularMomentum::printGlobalMomentum
 (
 	const GeometricField<vector, pointPatchField, pointMesh>& lm,
-	const GeometricField<vector, pointPatchField, pointMesh>& x
+	const GeometricField<vector, pointPatchField, pointMesh>& x,
+    const GeometricField<scalar, pointPatchField, pointMesh>& V
 ) const
 {
 
     vector lmG = vector::zero;
     vector amG = vector::zero;
-    scalar vol = gSum(mesh_.V());
+    scalar vol = gSum(V);
 
     forAll(mesh_.points(), node)
     {
-        lmG += lm[node]*mesh_.V()[node];
-        amG += mesh_.V()[node]*(x[node] ^ lm[node]);
+        lmG += lm[node]*V[node];
+        amG += V[node]*(x[node] ^ lm[node]);
     }
 
 	if (Pstream::parRun())
