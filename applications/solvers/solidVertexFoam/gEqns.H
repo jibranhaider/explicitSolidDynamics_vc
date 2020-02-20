@@ -78,7 +78,7 @@ if (angularMomentumConservation == "yes")
     {
         rhsAm[node] = rhsAm[node]/V[node];
     }
-    am.AMconservation(rhsLm, rhsLm1, rhsAm, xe, i, V);
+    am.AMconservation(rhsLm, rhsLm1, rhsAm, i, V);
 }
 
 lm += deltaT*rhsLm;

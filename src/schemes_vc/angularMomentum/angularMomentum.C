@@ -39,11 +39,11 @@ defineTypeNameAndDebug(angularMomentum, 0);
 
 angularMomentum::angularMomentum
 (
-	const fvMesh& vm,
+    const fvMesh& vm,
     const dictionary& dict
 )
 :
-	mesh_(vm),
+    mesh_(vm),
     pMesh_(mesh_),
     rho_(dict.lookup("rho"))
 {}
@@ -59,27 +59,26 @@ angularMomentum::~angularMomentum()
 
 void angularMomentum::AMconservation
 (
-	GeometricField<vector, pointPatchField, pointMesh>& rhsLm,
-	GeometricField<vector, pointPatchField, pointMesh>& rhsLm1,
-	const GeometricField<vector, pointPatchField, pointMesh>& rhsAm,
-    const vectorList& xe,
-	scalar RKstage,
+    GeometricField<vector, pointPatchField, pointMesh>& rhsLm,
+    GeometricField<vector, pointPatchField, pointMesh>& rhsLm1,
+    const GeometricField<vector, pointPatchField, pointMesh>& rhsAm,
+    scalar RKstage,
     const GeometricField<scalar, pointPatchField, pointMesh>& V
 ) const
 {
 
-	const objectRegistry& db = mesh_.thisDb();
-	const pointVectorField& x_ = db.lookupObject<pointVectorField>("x");
-	const pointVectorField& lm_ = db.lookupObject<pointVectorField>("lm");
+    const objectRegistry& db = mesh_.thisDb();
+    const pointVectorField& x_ = db.lookupObject<pointVectorField>("x");
+    const pointVectorField& lm_ = db.lookupObject<pointVectorField>("lm");
 
-	const dimensionedScalar deltaT
+    const dimensionedScalar deltaT
     (
         "deltaT",
         dimensionSet(0,0,1,0,0,0,0),
         db.time().deltaTValue()
     );
 
-	tmp<GeometricField<vector, pointPatchField, pointMesh> > tvf_x
+    tmp<GeometricField<vector, pointPatchField, pointMesh> > tvf_x
     (
         new GeometricField<vector, pointPatchField, pointMesh>
         (
@@ -96,9 +95,9 @@ void angularMomentum::AMconservation
         )
     );
 
-	GeometricField<vector, pointPatchField, pointMesh> xAM = tvf_x();
+    GeometricField<vector, pointPatchField, pointMesh> xAM = tvf_x();
 
-	tmp<GeometricField<vector, pointPatchField, pointMesh> > tvf_lm
+    tmp<GeometricField<vector, pointPatchField, pointMesh> > tvf_lm
     (
         new GeometricField<vector, pointPatchField, pointMesh>
         (
@@ -115,7 +114,7 @@ void angularMomentum::AMconservation
         )
     );
 
-	GeometricField<vector, pointPatchField, pointMesh> lmAM = tvf_lm();
+    GeometricField<vector, pointPatchField, pointMesh> lmAM = tvf_lm();
 
     if (RKstage == 0)
     {
@@ -129,14 +128,14 @@ void angularMomentum::AMconservation
         xAM.primitiveFieldRef() = xAM + ((deltaT*(lmAM/rho_))/2.0);
     }
 
-	tensor K_LL = tensor::zero;
-	tensor K_LB = tensor::zero;
-	scalar K_BB = 0.0;
-	vector R_L = vector::zero;
+    tensor K_LL = tensor::zero;
+    tensor K_LB = tensor::zero;
+    scalar K_BB = 0.0;
+    vector R_L = vector::zero;
 
-	forAll(mesh_.points(), node)
-	{
-		K_LL +=
+    forAll(mesh_.points(), node)
+    {
+        K_LL +=
             V[node]
            *((xAM[node] & xAM[node])*tensor::I - (xAM[node]*xAM[node]));
 
@@ -149,40 +148,40 @@ void angularMomentum::AMconservation
         R_L +=
             (V[node]*rhsAm[node])
           + ((V[node]*rhsLm[node]) ^ xAM[node]);
-	}
+    }
 
-	if (Pstream::parRun())
-	{
-		reduce(K_LL, sumOp<tensor>());
-		reduce(K_LB, sumOp<tensor>());
-		reduce(K_BB, sumOp<scalar>());
-		reduce(R_L, sumOp<vector>());
-	}
+    if (Pstream::parRun())
+    {
+        reduce(K_LL, sumOp<tensor>());
+        reduce(K_LB, sumOp<tensor>());
+        reduce(K_BB, sumOp<scalar>());
+        reduce(R_L, sumOp<vector>());
+    }
 
-	tensor LHS = K_LL - ((K_LB & K_LB)/K_BB);
+    tensor LHS = K_LL - ((K_LB & K_LB)/K_BB);
     vector RHS = R_L;
 
-	vector lambda = inv(LHS) & RHS;
-	vector beta = (-K_LB & lambda)/K_BB;
+    vector lambda = inv(LHS) & RHS;
+    vector beta = (-K_LB & lambda)/K_BB;
 
-	forAll(mesh_.points(), node)
-	{
-		rhsLm[node] = rhsLm[node] + (lambda ^ xAM[node]) + beta;
-	}
+    forAll(mesh_.points(), node)
+    {
+        rhsLm[node] = rhsLm[node] + (lambda ^ xAM[node]) + beta;
+    }
 
-	if (RKstage == 0)
-	{
-		rhsLm1 = rhsLm;
-	}
+    if (RKstage == 0)
+    {
+        rhsLm1 = rhsLm;
+    }
 
-	tvf_x.clear();
-	tvf_lm.clear();
+    tvf_x.clear();
+    tvf_lm.clear();
 
-	if (Pstream::parRun())
-	{
-		rhsLm.correctBoundaryConditions();
-		rhsLm1.correctBoundaryConditions();
-	}
+    if (Pstream::parRun())
+    {
+        rhsLm.correctBoundaryConditions();
+        rhsLm1.correctBoundaryConditions();
+    }
 }
 
 
@@ -190,8 +189,8 @@ void angularMomentum::AMconservation
 
 void angularMomentum::printGlobalMomentum
 (
-	const GeometricField<vector, pointPatchField, pointMesh>& lm,
-	const GeometricField<vector, pointPatchField, pointMesh>& x,
+    const GeometricField<vector, pointPatchField, pointMesh>& lm,
+    const GeometricField<vector, pointPatchField, pointMesh>& x,
     const GeometricField<scalar, pointPatchField, pointMesh>& V
 ) const
 {
@@ -206,11 +205,11 @@ void angularMomentum::printGlobalMomentum
         amG += V[node]*(x[node] ^ lm[node]);
     }
 
-	if (Pstream::parRun())
-	{
-		reduce(lmG, sumOp<vector>());
-		reduce(amG, sumOp<vector>());
-	}
+    if (Pstream::parRun())
+    {
+        reduce(lmG, sumOp<vector>());
+        reduce(amG, sumOp<vector>());
+    }
 
     Info<< "\nPrinting global momentums ..." << nl
         << "Global linear momentum = " << lmG/vol << nl

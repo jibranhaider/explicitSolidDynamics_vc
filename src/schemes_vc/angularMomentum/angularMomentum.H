@@ -91,13 +91,12 @@ public:
 
         // Edit
 
-    		//- Angular momentum conservation
+            //- Angular momentum conservation
             void AMconservation
             (
-    			GeometricField<vector, pointPatchField, pointMesh>&,
+                GeometricField<vector, pointPatchField, pointMesh>&,
                 GeometricField<vector, pointPatchField, pointMesh>&,
                 const GeometricField<vector, pointPatchField, pointMesh>&,
-                const vectorList&,
                 scalar,
                 const GeometricField<scalar, pointPatchField, pointMesh>&
             ) const;
