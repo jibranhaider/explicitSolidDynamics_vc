@@ -85,6 +85,11 @@ int main(int argc, char *argv[])
         F = 0.5*(F.oldTime() + F);
         x = 0.5*(x.oldTime() + x);
 
+        if (angularMomentumConservation == "yes")
+        {
+            am.printGlobalMomentum(lm,x,V);
+        }
+
         #include "updateVariables.H"
 
         if (runTime.outputTime())
