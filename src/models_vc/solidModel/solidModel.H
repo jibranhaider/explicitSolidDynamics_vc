@@ -155,6 +155,11 @@ public:
                 return mu_;
             }
 
+            const dimensionedScalar& nu() const
+            {
+                return nu_;
+            }
+
             const dimensionedScalar& kappa() const
             {
                 return kappa_;
