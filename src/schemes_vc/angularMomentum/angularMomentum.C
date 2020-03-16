@@ -120,7 +120,6 @@ void angularMomentum::AMconservation
     {
         xAM.primitiveFieldRef() = x_.oldTime();
     }
-
     else if (RKstage == 1)
     {
         xAM.primitiveFieldRef() = x_.oldTime() + (deltaT/2.0)*(lm_.oldTime()/rho_);
@@ -169,6 +168,14 @@ void angularMomentum::AMconservation
         rhsLm[node] = rhsLm[node] + (lambda ^ xAM[node]) + beta;
     }
 
+    /*// Constraint to check angular momentum conservation for debugging
+    vector sumAM = vector::zero;
+    forAll(mesh_.points(), node){
+        sumAM += (V[node]*rhsAm[node]) - V[node]*(xAM[node] ^ rhsLm[node]);
+    }
+    Info<< " Angular momentum constraint (RK stage " << RKstage << ") = "
+        << sumAM << endl;*/
+
     if (RKstage == 0)
     {
         rhsLm1 = rhsLm;
@@ -211,9 +218,8 @@ void angularMomentum::printGlobalMomentum
         reduce(amG, sumOp<vector>());
     }
 
-    Info<< "\nPrinting global momentums ..." << nl
-        << "Global linear momentum = " << lmG/vol << nl
-        << "Global angular momentum = " << amG/vol << endl;
+    Info<< " Global linear momentum = " << lmG/vol << nl
+        << " Global angular momentum = " << amG/vol << endl;
 }
 
 
