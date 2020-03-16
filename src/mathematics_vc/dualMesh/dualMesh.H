@@ -54,7 +54,7 @@ class dualMesh
     // Private data
 
         // Mesh
-         const fvMesh& mesh_;
+        const fvMesh& mesh_;
 
         // Point mesh
         pointMesh pMesh_;
@@ -74,6 +74,9 @@ class dualMesh
 
         // Interior nodes
         PackedBoolList isInteriorNode_;
+
+        // Interior edges
+        PackedBoolList isInteriorEdge_;
 
         // Dual material face area vectors
         vectorList Sf_;
@@ -127,6 +130,11 @@ public:
             const vectorList& areaVector() const
             {
                 return Sf_;
+            }
+
+            const PackedBoolList& isInteriorEdge() const
+            {
+                return isInteriorEdge_;
             }
 
         // Print

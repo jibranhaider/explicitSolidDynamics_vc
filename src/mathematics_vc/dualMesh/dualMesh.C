@@ -58,6 +58,7 @@ dualMesh::dualMesh
     Xe_(edges_.size()),
     edgeCellsFaces_(edges_.size()),
     isInteriorNode_(mesh_.nPoints(), true),
+    isInteriorEdge_(mesh_.nEdges(), true),
     Sf_(edges_.size()),
     op(mesh_)
 {
@@ -118,13 +119,24 @@ dualMesh::dualMesh
         }
     }
 
-    // Interior nodes
     forAll(mesh_.boundary(), patch)
     {
+        // Interior nodes
         forAll(mesh_.boundaryMesh()[patch].meshPoints(), nodei)
         {
             const label& node = mesh_.boundaryMesh()[patch].meshPoints()[nodei];
             isInteriorNode_.unset(node);
+        }
+
+        // Interior edges
+        forAll(mesh_.boundary()[patch], facei)
+        {
+            const label& face = mesh_.boundaryMesh()[patch].start() + facei;
+            forAll(mesh_.faceEdges()[face], edgei)
+            {
+                const label& edge = mesh_.faceEdges()[face][edgei];
+                isInteriorEdge_.unset(edge);
+            }
         }
     }
 
@@ -207,7 +219,7 @@ void dualMesh::printPrimalMeshCentroid () const
         reduce(sum, sumOp<vector>());
     }
 
-    Info << "\nCentroid of primal mesh = " << sum/Vt << endl;
+    Info << "Centroid of primal mesh = " << sum/Vt << endl;
 }
 
 
@@ -228,7 +240,7 @@ void dualMesh::printDualMeshCentroid () const
         reduce(sum, sumOp<vector>());
     }
 
-    Info << "\nCentroid of dual mesh = " << sum/Vt << endl;
+    Info << "Centroid of dual mesh = " << sum/Vt << endl;
 }
 
 
