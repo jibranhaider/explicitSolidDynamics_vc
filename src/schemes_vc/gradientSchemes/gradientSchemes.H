@@ -39,7 +39,6 @@ SourceFiles
 #include "surfaceFields.H"
 #include "pointFields.H"
 #include "vectorList.H"
-#include "scalarList.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -107,12 +106,26 @@ public:
 
         // Edit
 
-            //- Least square gradient for a volVectorField
-            // pointTensorField gradient
+            //- Least square gradient for a pointScalarField
+            vectorField gradient
+            (
+                const GeometricField<scalar, pointPatchField, pointMesh>& U
+            ) const;
+
+            //- Least square gradient for a pointVectorField
             tensorField gradient
             (
                 const GeometricField<vector, pointPatchField, pointMesh>& U
             ) const;
+
+            //- Recontruction of a pointScalarField
+            void reconstruct
+            (
+                GeometricField<scalar, pointPatchField, pointMesh>&,
+                vectorField&,
+                scalarList&,
+                scalarList&
+            );
 
             //- Recontruction of a pointVectorField
             void reconstruct
@@ -122,9 +135,7 @@ public:
                 vectorList&,
                 vectorList&
             );
-
 };
-
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

@@ -77,34 +77,69 @@ gradientSchemes::~gradientSchemes()
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-// pointTensorField gradientSchemes::gradient
+vectorField gradientSchemes::gradient
+(
+    const GeometricField<scalar, pointPatchField, pointMesh>& U
+)   const
+{
+    vectorField Ugrad(mesh_.points().size(), vector::zero);
+
+    forAll(edges_, edgeID)
+    {
+        label ownID = edges_[edgeID][0];
+        label neiID = edges_[edgeID][1];
+
+        const vector& grad = 0.5 * (U[ownID]+U[neiID]) * Sf_[edgeID];
+        Ugrad[ownID] += grad;
+        Ugrad[neiID] -= grad;
+    }
+
+    forAll(mesh_.boundary(), patchID)
+    {
+        forAll(mesh_.boundaryMesh()[patchID], face)
+        {
+            const label& faceID = mesh_.boundaryMesh()[patchID].start() + face;
+
+            forAll(mesh_.faces()[faceID], node)
+            {
+                const label& nodeID = mesh_.faces()[faceID][node];
+                label nodeB = -1;
+                label nodeC = -1;
+
+                if (node == 0)
+                {
+                    nodeB = mesh_.faces()[faceID][1];
+                    nodeC = mesh_.faces()[faceID][2];
+                }
+                else if(node == 1)
+                {
+                    nodeB = mesh_.faces()[faceID][2];
+                    nodeC = mesh_.faces()[faceID][0];
+                }
+                else if(node == 2)
+                {
+                    nodeB = mesh_.faces()[faceID][0];
+                    nodeC = mesh_.faces()[faceID][1];
+                }
+
+                const scalar& lmC = 6*U[nodeID] + U[nodeB] + U[nodeC];
+                const vector grad = (1.0/24.0) * (lmC * mesh_.Sf().boundaryField()[patchID][face]);
+                Ugrad[nodeID] += grad;
+            }
+        }
+    }
+
+    return (Ugrad/V_);
+}
+
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
 tensorField gradientSchemes::gradient
 (
    	const GeometricField<vector, pointPatchField, pointMesh>& U
 ) 	const
 {
-
-    // tmp<GeometricField<tensor, pointPatchField, pointMesh> > ttf
-    // (
-    //     new GeometricField<tensor, pointPatchField, pointMesh>
-    //     (
-    //         IOobject
-    //         (
-    //             "gradient("+U.name()+')',
-    //             mesh_
-    //         ),
-    //         pMesh_,
-    //         dimensioned<tensor>
-    //         (
-    //             "0",
-    //             U.dimensions()/dimLength,
-    //             pTraits<tensor>::zero
-    //         )
-    //     )
-    // );
-
-    // GeometricField<tensor, pointPatchField, pointMesh> Ugrad = ttf();
-
 
     tensorField Ugrad(mesh_.points().size(), tensor::zero);
 
@@ -153,68 +188,28 @@ tensorField gradientSchemes::gradient
         }
     }
 
-    // ttf.clear();
-
     return (Ugrad/V_);
+}
 
 
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+void gradientSchemes::reconstruct
+(
+    GeometricField<scalar, pointPatchField, pointMesh>& U,
+    vectorField& Ugrad,
+    scalarList& Uown,
+    scalarList& Unei
+)
+{
+    forAll(edges_, edge)
+    {
+        const label& own = edges_[edge][0];
+        const label& nei = edges_[edge][1];
 
-
- //    tmp<GeometricField<vector, pointPatchField, pointMesh> > tvf
- //    (
- //        new GeometricField<vector, pointPatchField, pointMesh>
- //        (
- //            IOobject
- //            (
- //                "dummy",
- //                mesh_
- //            ),
- //            U.mesh(),
- //            dimensioned<vector>("dummy", U.dimensions()/dimLength, pTraits<vector>::zero)
- //        )
- //    );
-
-	// GeometricField<vector, pointPatchField, pointMesh> UgradX = tvf();
-	// GeometricField<vector, pointPatchField, pointMesh> UgradY = tvf();
-	// GeometricField<vector, pointPatchField, pointMesh> UgradZ = tvf();
-
-	// UgradX = gradientSchemes::gradient(U.component(0));
-	// UgradY = gradientSchemes::gradient(U.component(1));
-	// UgradZ = gradientSchemes::gradient(U.component(2));
-
- //    tmp<GeometricField<tensor, pointPatchField, pointMesh> > ttf
- //    (
- //        new GeometricField<tensor, pointPatchField, pointMesh>
- //        (
- //            IOobject
- //            (
- //                "dummy",
- //                mesh_
- //            ),
- //            U.mesh(),
- //            dimensioned<tensor>("dummy", U.dimensions()/dimLength, pTraits<tensor>::zero)
- //        )
- //    );
-
-	// GeometricField<tensor, pointPatchField, pointMesh> Ugrad = ttf();
-
-
-	// forAll(mesh_.points(), nodeID)
-	// {
-	// 	Ugrad[nodeID] = tensor(UgradX[nodeID], UgradY[nodeID], UgradZ[nodeID]);
-	// }
-
-	// if (Pstream::parRun())
-	// {
-	// 	Ugrad.correctBoundaryConditions();
-	// }
-
-	// tvf.clear();
-	// ttf.clear();
-
-	// return Ugrad;
-
+        Uown[edge] = U[own] + (Ugrad[own] & (Xe_[edge] - Xown_[edge]));
+        Unei[edge] = U[nei] + (Ugrad[nei] & (Xe_[edge] - Xnei_[edge]));
+    }
 }
 
 
@@ -237,7 +232,6 @@ void gradientSchemes::reconstruct
         Unei[edge] = U[nei] + (Ugrad[nei] & (Xe_[edge] - Xnei_[edge]));
     }
 }
-
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
