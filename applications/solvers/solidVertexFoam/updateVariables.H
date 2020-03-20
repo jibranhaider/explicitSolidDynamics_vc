@@ -19,4 +19,4 @@ grad.reconstruct(lm, lmGrad, lmM, lmP);
 
 // Contact fluxes
 lmC = inter.pointToEdge(lm);
-tC = (inter.pointToEdge(P) & N) + (0.5*mech.Smatrix(Up, Us) & (lmP-lmM));
+tC = (inter.pointToEdge(P) & N) + (0.5*mech.Smatrix(Up, Us) & (lmP - lmM));

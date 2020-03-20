@@ -64,8 +64,8 @@ int main(int argc, char *argv[])
 
         t += deltaT; tstep++;
 
-        Info << "\nTime Step =" << tstep << "\ndeltaT = " << deltaT.value() << " s"
-             << "\nTime = " << t.value() << " s" << endl;
+        Info << "\nTime Step =" << tstep << "\n deltaT = " << deltaT.value() << " s"
+             << "\n Time = " << t.value() << " s" << endl;
 
         lm.oldTime();
         F.oldTime();
@@ -85,12 +85,12 @@ int main(int argc, char *argv[])
         F = 0.5*(F.oldTime() + F);
         x = 0.5*(x.oldTime() + x);
 
+        #include "updateVariables.H"
+
         if (angularMomentumConservation == "yes")
         {
             am.printGlobalMomentum(lm,x,V);
         }
-
-        #include "updateVariables.H"
 
         if (runTime.outputTime())
         {
@@ -101,13 +101,13 @@ int main(int argc, char *argv[])
             p.write();
         }
 
-        Info << "Percentage completed = "
+        Info<< " Simulation completed = "
              << (t.value()/runTime.endTime().value())*100 << "%" << endl;
     }
 
-    Info << "\nExecutionTime = " << runTime.elapsedCpuTime() << " s"
-         << "  ClockTime = " << runTime.elapsedClockTime() << " s"
-         << "\nEnd\n" << endl;
+    Info<< "\nExecutionTime = " << runTime.elapsedCpuTime() << " s"
+        << "  ClockTime = " << runTime.elapsedClockTime() << " s"
+        << "\nEnd\n" << endl;
 
     return 0;
 }

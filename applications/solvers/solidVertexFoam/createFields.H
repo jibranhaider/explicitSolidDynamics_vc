@@ -1,4 +1,4 @@
-Info << "Creating mesh parameters ..." << endl;
+Info << "\nCreating mesh parameters ..." << endl;
 
 // Operations class
 operations op(mesh);
@@ -245,7 +245,9 @@ Info << "Printing data ..." << endl;
 // Print material properties
 model.printMaterialProperties();
 
-// // Print global linear and angular momentum
+Info << "\nPrinting global momentum ..." << endl;
+
+// Print global linear and angular momentum
 am.printGlobalMomentum(lm,x,V);
 
 // Print centroid of mesh
