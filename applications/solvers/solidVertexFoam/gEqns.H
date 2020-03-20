@@ -1,11 +1,14 @@
-// Update coordinate
-xe = inter.pointToEdge(x);
-x += deltaT*(lm/rho);
+// Compute interior terms for right hand sides
+rhsLm.primitiveFieldRef() = op.surfaceSum(tC*magSf);
+rhsF.primitiveFieldRef() = op.surfaceSum((lmC/rho.value())*Sf);
 
-// Compute right hand sides
-rhsLm.primitiveFieldRef() = op.surfaceIntegrate(tC*magSf);
-rhsF.primitiveFieldRef() = op.surfaceIntegrate((lmC/rho.value())*Sf);
+if (angularMomentumConservation == "yes")
+{
+    xe = inter.pointToEdge(x);
+    rhsAm.primitiveFieldRef() = op.surfaceSum((xe ^ tC)*magSf);
+}
 
+// Compute boundary terms for right hand sides
 forAll(mesh.boundary(), patch)
 {
     forAll(mesh.boundaryMesh()[patch], facei)
@@ -42,13 +45,17 @@ forAll(mesh.boundary(), patch)
             vector lm2 = lm[nodeB];
             vector lm3 = lm[nodeC];
 
+            vector x1 = x[node];
+            vector x2 = x[nodeB];
+            vector x3 = x[nodeC];
+
             if (patch == freePatchID)
             {
                 t1 = vector::zero;
                 t2 = vector::zero;
                 t3 = vector::zero;
             }
-            if (patch == tractionPatchID)
+            else if (patch == tractionPatchID)
             {
                 t1 = traction;
                 t2 = traction;
@@ -61,27 +68,33 @@ forAll(mesh.boundary(), patch)
             rhsLm[node] += tC*(magSf_p.boundaryField()[patch][facei]/3.0);
             rhsF[node] +=
                 (lmC/rho.value())*(Sf_p.boundaryField()[patch][facei]/3.0);
+
+            if (angularMomentumConservation == "yes")
+            {
+                vector xC = 0.125*(6.0*x1 + x2 +x3);
+                rhsAm[node] += (xC ^ tC)*(magSf_p.boundaryField()[patch][facei]/3.0);
+            }
         }
     }
 }
 
-forAll(mesh.points(), node)
-{
-    rhsLm[node] = rhsLm[node]/V[node];
-    rhsF[node] = rhsF[node]/V[node];
-}
+// Compute right hand sides
+op.volumeIntegrate(rhsLm, V);
+op.volumeIntegrate(rhsF, V);
 
+// Conservation of angular momentum
 if (angularMomentumConservation == "yes")
 {
-    rhsAm.primitiveFieldRef() = op.surfaceIntegrate((xe^tC)*magSf);
-    forAll(mesh.points(), node)
-    {
-        rhsAm[node] = rhsAm[node]/V[node];
-    }
+    op.volumeIntegrate(rhsAm, V);
     am.AMconservation(rhsLm, rhsLm1, rhsAm, i, V);
 }
 
-lm += deltaT*rhsLm;
-F += deltaT*rhsF;
+// Compute node coordinates
+x += deltaT*(lm/rho);
 
+// Compute linear momentum
+lm += deltaT*rhsLm;
 lm.correctBoundaryConditions();
+
+// Compute deformation gradient tensor
+F += deltaT*rhsF;
