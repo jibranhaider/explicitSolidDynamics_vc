@@ -61,10 +61,10 @@ class gradientSchemes
         //- Nodal coordinate
         const vectorField& X_;
 
-        //- Owner nodal coordinate
+        //- Owner node coordinate
         vectorList Xown_;
 
-        //- Neighbour nodal coordinate
+        //- Neighbour node coordinate
         vectorList Xnei_;
 
         //- Dual control volume
@@ -73,7 +73,7 @@ class gradientSchemes
         //- Dual area vector
         const vectorList& Sf_;
 
-        // Edge centers
+        //- Edge center coordinate
         vectorList Xe_;
 
 private:
@@ -106,19 +106,19 @@ public:
 
         // Edit
 
-            //- Least square gradient for a pointScalarField
+            //- Least square gradient of a pointScalarField
             vectorField gradient
             (
                 const GeometricField<scalar, pointPatchField, pointMesh>& U
             ) const;
 
-            //- Least square gradient for a pointVectorField
+            //- Least square gradient of a pointVectorField
             tensorField gradient
             (
                 const GeometricField<vector, pointPatchField, pointMesh>& U
             ) const;
 
-            //- Recontruction of a pointScalarField
+            //- Linear recontruction of a pointScalarField
             void reconstruct
             (
                 GeometricField<scalar, pointPatchField, pointMesh>&,
@@ -127,7 +127,7 @@ public:
                 scalarList&
             );
 
-            //- Recontruction of a pointVectorField
+            //- Linear recontruction of a pointVectorField
             void reconstruct
             (
                 GeometricField<vector, pointPatchField, pointMesh>&,

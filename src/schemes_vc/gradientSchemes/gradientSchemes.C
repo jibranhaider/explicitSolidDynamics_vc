@@ -54,9 +54,8 @@ gradientSchemes::gradientSchemes
     V_(V),
     Sf_(Sf),
     Xe_(edges_.size())
-
 {
-    // Edge centers
+    // Compute edge center coordinates
     forAll(edges_, edge)
     {
         const label& own = edges_[edge][0];
@@ -84,47 +83,48 @@ vectorField gradientSchemes::gradient
 {
     vectorField Ugrad(mesh_.points().size(), vector::zero);
 
-    forAll(edges_, edgeID)
+    forAll(edges_, edge)
     {
-        label ownID = edges_[edgeID][0];
-        label neiID = edges_[edgeID][1];
+        label own = edges_[edge][0];
+        label nei = edges_[edge][1];
 
-        const vector& grad = 0.5 * (U[ownID]+U[neiID]) * Sf_[edgeID];
-        Ugrad[ownID] += grad;
-        Ugrad[neiID] -= grad;
+        const vector& grad = 0.5*(U[own] + U[nei])*Sf_[edge];
+        Ugrad[own] += grad;
+        Ugrad[nei] -= grad;
     }
 
-    forAll(mesh_.boundary(), patchID)
+    forAll(mesh_.boundary(), patch)
     {
-        forAll(mesh_.boundaryMesh()[patchID], face)
+        forAll(mesh_.boundaryMesh()[patch], facei)
         {
-            const label& faceID = mesh_.boundaryMesh()[patchID].start() + face;
+            const label& face = mesh_.boundaryMesh()[patch].start() + facei;
 
-            forAll(mesh_.faces()[faceID], node)
+            forAll(mesh_.faces()[face], nodei)
             {
-                const label& nodeID = mesh_.faces()[faceID][node];
+                const label& node = mesh_.faces()[face][nodei];
                 label nodeB = -1;
                 label nodeC = -1;
 
-                if (node == 0)
+                if (nodei == 0)
                 {
-                    nodeB = mesh_.faces()[faceID][1];
-                    nodeC = mesh_.faces()[faceID][2];
+                    nodeB = mesh_.faces()[face][1];
+                    nodeC = mesh_.faces()[face][2];
                 }
-                else if(node == 1)
+                else if(nodei == 1)
                 {
-                    nodeB = mesh_.faces()[faceID][2];
-                    nodeC = mesh_.faces()[faceID][0];
+                    nodeB = mesh_.faces()[face][2];
+                    nodeC = mesh_.faces()[face][0];
                 }
-                else if(node == 2)
+                else if(nodei == 2)
                 {
-                    nodeB = mesh_.faces()[faceID][0];
-                    nodeC = mesh_.faces()[faceID][1];
+                    nodeB = mesh_.faces()[face][0];
+                    nodeC = mesh_.faces()[face][1];
                 }
 
-                const scalar& lmC = 6*U[nodeID] + U[nodeB] + U[nodeC];
-                const vector grad = (1.0/24.0) * (lmC * mesh_.Sf().boundaryField()[patchID][face]);
-                Ugrad[nodeID] += grad;
+                const scalar& lmC = 6*U[node] + U[nodeB] + U[nodeC];
+                const vector grad =
+                    (1.0/24.0) * (lmC*mesh_.Sf().boundaryField()[patch][facei]);
+                Ugrad[node] += grad;
             }
         }
     }
@@ -134,56 +134,55 @@ vectorField gradientSchemes::gradient
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
 tensorField gradientSchemes::gradient
 (
    	const GeometricField<vector, pointPatchField, pointMesh>& U
 ) 	const
 {
-
     tensorField Ugrad(mesh_.points().size(), tensor::zero);
 
-    forAll(edges_, edgeID)
+    forAll(edges_, edge)
     {
-        label ownID = edges_[edgeID][0];
-        label neiID = edges_[edgeID][1];
+        label own = edges_[edge][0];
+        label nei = edges_[edge][1];
 
-        const tensor& grad = 0.5 * (U[ownID]+U[neiID]) * Sf_[edgeID];
-        Ugrad[ownID] += grad;
-        Ugrad[neiID] -= grad;
+        const tensor& grad = 0.5*(U[own] + U[nei])*Sf_[edge];
+        Ugrad[own] += grad;
+        Ugrad[nei] -= grad;
     }
 
-    forAll(mesh_.boundary(), patchID)
+    forAll(mesh_.boundary(), patch)
     {
-        forAll(mesh_.boundaryMesh()[patchID], face)
+        forAll(mesh_.boundaryMesh()[patch], facei)
         {
-            const label& faceID = mesh_.boundaryMesh()[patchID].start() + face;
+            const label& face = mesh_.boundaryMesh()[patch].start() + facei;
 
-            forAll(mesh_.faces()[faceID], node)
+            forAll(mesh_.faces()[face], nodei)
             {
-                const label& nodeID = mesh_.faces()[faceID][node];
+                const label& node = mesh_.faces()[face][nodei];
                 label nodeB = -1;
                 label nodeC = -1;
 
-                if (node == 0)
+                if (nodei == 0)
                 {
-                    nodeB = mesh_.faces()[faceID][1];
-                    nodeC = mesh_.faces()[faceID][2];
+                    nodeB = mesh_.faces()[face][1];
+                    nodeC = mesh_.faces()[face][2];
                 }
-                else if(node == 1)
+                else if(nodei == 1)
                 {
-                    nodeB = mesh_.faces()[faceID][2];
-                    nodeC = mesh_.faces()[faceID][0];
+                    nodeB = mesh_.faces()[face][2];
+                    nodeC = mesh_.faces()[face][0];
                 }
-                else if(node == 2)
+                else if(nodei == 2)
                 {
-                    nodeB = mesh_.faces()[faceID][0];
-                    nodeC = mesh_.faces()[faceID][1];
+                    nodeB = mesh_.faces()[face][0];
+                    nodeC = mesh_.faces()[face][1];
                 }
 
-                const vector& lmC = 6*U[nodeID] + U[nodeB] + U[nodeC];
-                const tensor grad = (1.0/24.0) * (lmC * mesh_.Sf().boundaryField()[patchID][face]);
-                Ugrad[nodeID] += grad;
+                const vector& lmC = 6*U[node] + U[nodeB] + U[nodeC];
+                const tensor grad =
+                    (1.0/24.0) * (lmC*mesh_.Sf().boundaryField()[patch][facei]);
+                Ugrad[node] += grad;
             }
         }
     }
@@ -193,7 +192,6 @@ tensorField gradientSchemes::gradient
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
 void gradientSchemes::reconstruct
 (
     GeometricField<scalar, pointPatchField, pointMesh>& U,
