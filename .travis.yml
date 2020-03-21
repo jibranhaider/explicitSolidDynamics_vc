@@ -1,7 +1,7 @@
 # Travis CI setup for explicitSolidDynamics_vc toolkit
 
 sudo: required
-dist: xenial
+dist: bionic
 language: cpp
 
 matrix:
