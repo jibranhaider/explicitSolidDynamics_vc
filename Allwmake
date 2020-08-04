@@ -15,5 +15,8 @@ cd ../models_vc
 cd ../../applications/solvers/solidVertexFoam
 ./compile
 
+cd ../solidStaticVertexFoam
+./compile
+
 cd ../../utilities/initialConditions_vc
 ./compile
