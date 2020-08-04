@@ -9,7 +9,7 @@
   <a href="https://travis-ci.org/jibranhaider/explicitSolidDynamics_vc" target="_blank">
     <img alt="Travis (.org)" src="https://img.shields.io/travis/jibranhaider/explicitsoliddynamics_vc"> &nbsp;
   </a>  
-  <img alt="OpenFOAM 6" src="https://img.shields.io/badge/OpenFOAM-v7_| v6_| v5_| v4-darkgreen.svg"> &nbsp;
+  <img alt="OpenFOAM 6" src="https://img.shields.io/badge/OpenFOAM-v7_| v6_| v5-darkgreen.svg"> &nbsp;
   <a href="https://github.com/jibranhaider/explicitSolidDynamics/blob/master/LICENSE">
     <img alt="GPLv3 license" src="https://img.shields.io/badge/License-GPLv3-orange.svg"> &nbsp;
   </a> 
