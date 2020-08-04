@@ -49,16 +49,12 @@ operations::operations
     pMesh_(mesh_)
 {}
 
-
-
-
 // * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * * //
 operations::~operations()
 {}
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
-
 
 dimensionedScalar operations::minimumEdgeLength()
 {
@@ -88,9 +84,7 @@ dimensionedScalar operations::minimumEdgeLength()
     return h;
 }
 
-
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
 pointTensorField operations::invT
 (
     const GeometricField<tensor, pointPatchField, pointMesh>& T
@@ -116,202 +110,186 @@ pointTensorField operations::invT
     return inv.T();
 }
 
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+pointTensorField operations::tensorProduct
+(
+    const GeometricField<tensor, pointPatchField, pointMesh>& T1,
+    const GeometricField<tensor, pointPatchField, pointMesh>& T2
+) const
+{
 
+    tmp<GeometricField<tensor, pointPatchField, pointMesh> > tsf
+    (
+        new GeometricField<tensor, pointPatchField, pointMesh>
+        (
+            IOobject("TP", mesh_),
+            T1.mesh(),
+            dimensioned<tensor>("TP", T1.dimensions()*T2.dimensions(), pTraits<tensor>::one)
+        )
+    );
 
+    GeometricField<tensor, pointPatchField, pointMesh> TP = tsf();
+
+    forAll (mesh_.points(), i)
+    {
+        TP[i] = operations::tensorProduct(T1[i], T2[i]);
+    }
+
+    tsf.clear();
+
+    return TP;
+}
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+tensor operations::tensorProduct
+(
+    const tensor& T1, const tensor& T2
+) const
+{
+    tensor TP = tensor::zero;
 
-// volTensorField operations::tensorProduct
-// (
-//     const GeometricField<tensor, fvPatchField, volMesh>& T1,
-//     const GeometricField<tensor, fvPatchField, volMesh>& T2
-// ) const
-// {
+    TP.xx() = (T1.yy() * T2.zz()) - (T1.yz() * T2.zy()) + (T1.zz() * T2.yy()) - (T1.zy() * T2.yz());
+    TP.xy() = (T1.yz() * T2.zx()) - (T1.yx() * T2.zz()) + (T1.zx() * T2.yz()) - (T1.zz() * T2.yx());
+    TP.xz() = (T1.yx() * T2.zy()) - (T1.yy() * T2.zx()) + (T1.zy() * T2.yx()) - (T1.zx() * T2.yy());
 
-//     tmp<GeometricField<tensor, fvPatchField, volMesh> > tsf
-//     (
-//         new GeometricField<tensor, fvPatchField, volMesh>
-//         (
-//             IOobject("P", mesh_),
-//             mesh_,
-//             dimensioned<tensor>("P", T1.dimensions()*T2.dimensions(), pTraits<tensor>::one)
-//         )
-//     );
+    TP.yx() = (T1.xz() * T2.zy()) - (T1.xy() * T2.zz()) + (T1.zy() * T2.xz()) - (T1.zz() * T2.xy());
+    TP.yy() = (T1.zz() * T2.xx()) - (T1.zx() * T2.xz()) + (T1.xx() * T2.zz()) - (T1.xz() * T2.zx());
+    TP.yz() = (T1.zx() * T2.xy()) - (T1.zy() * T2.xx()) + (T1.xy() * T2.zx()) - (T1.xx() * T2.zy());
 
-//     GeometricField<tensor, fvPatchField, volMesh> P = tsf();
+    TP.zx() = (T1.xy() * T2.yz()) - (T1.xz() * T2.yy()) + (T1.yz() * T2.xy()) - (T1.yy() * T2.xz());
+    TP.zy() = (T1.xz() * T2.yx()) - (T1.xx() * T2.yz()) + (T1.yx() * T2.xz()) - (T1.yz() * T2.xx());
+    TP.zz() = (T1.xx() * T2.yy()) - (T1.xy() * T2.yx()) + (T1.yy() * T2.xx()) - (T1.yx() * T2.xy());
 
-//     forAll (mesh_.cells(), i)
-//     {
-//         P[i] = operations::tensorProduct(T1[i], T2[i]);
-//     }
-
-//     tsf.clear();
-
-//     return P;
-// }
-
-
-// // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-// tensor operations::tensorProduct
-// (
-//     const tensor& T1, const tensor& T2
-// ) const
-// {
-//     tensor P = tensor::zero;
-
-//     P.xx() = (T1.yy() * T2.zz()) - (T1.yz() * T2.zy()) + (T1.zz() * T2.yy()) - (T1.zy() * T2.yz());
-//     P.xy() = (T1.yz() * T2.zx()) - (T1.yx() * T2.zz()) + (T1.zx() * T2.yz()) - (T1.zz() * T2.yx());
-//     P.xz() = (T1.yx() * T2.zy()) - (T1.yy() * T2.zx()) + (T1.zy() * T2.yx()) - (T1.zx() * T2.yy());
-
-//     P.yx() = (T1.xz() * T2.zy()) - (T1.xy() * T2.zz()) + (T1.zy() * T2.xz()) - (T1.zz() * T2.xy());
-//     P.yy() = (T1.zz() * T2.xx()) - (T1.zx() * T2.xz()) + (T1.xx() * T2.zz()) - (T1.xz() * T2.zx());
-//     P.yz() = (T1.zx() * T2.xy()) - (T1.zy() * T2.xx()) + (T1.xy() * T2.zx()) - (T1.xx() * T2.zy());
-
-//     P.zx() = (T1.xy() * T2.yz()) - (T1.xz() * T2.yy()) + (T1.yz() * T2.xy()) - (T1.yy() * T2.xz());
-//     P.zy() = (T1.xz() * T2.yx()) - (T1.xx() * T2.yz()) + (T1.yx() * T2.xz()) - (T1.yz() * T2.xx());
-//     P.zz() = (T1.xx() * T2.yy()) - (T1.xy() * T2.yx()) + (T1.yy() * T2.xx()) - (T1.yx() * T2.xy());
-
-//     return P;
-// }
-
-
-// // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-// void operations::decomposeTensor
-// (
-//     const GeometricField<tensor, fvPatchField, volMesh>& T,
-//     GeometricField<vector, fvPatchField, volMesh>& Vx,
-//     GeometricField<vector, fvPatchField, volMesh>& Vy,
-//     GeometricField<vector, fvPatchField, volMesh>& Vz
-// ) const
-// {
-//     forAll (mesh_.cells(), cellID)
-//     {
-//         Vx[cellID] = vector(T[cellID].xx(), T[cellID].xy(), T[cellID].xz());
-//         Vy[cellID] = vector(T[cellID].yx(), T[cellID].yy(), T[cellID].yz());
-//         Vz[cellID] = vector(T[cellID].zx(), T[cellID].zy(), T[cellID].zz());
-//     }
-
-//     if( Pstream::parRun() )
-//     {
-//         Vx.correctBoundaryConditions();
-//         Vy.correctBoundaryConditions();
-//         Vz.correctBoundaryConditions();
-//     }
-// }
-
-
-// // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-// pointVectorField operations::decomposeTensorX
-// (
-//     const GeometricField<tensor, pointPatchField, pointMesh>& T
-// ) const
-// {
-
-//     tmp<GeometricField<vector, pointPatchField, pointMesh> > tvf
-//     (
-//         new GeometricField<vector, pointPatchField, pointMesh>
-//         (
-//             IOobject
-//             (
-//                 "dummy",
-//                 mesh_
-//             ),
-//             T.mesh(),
-//             dimensioned<vector>("dummy", T.dimensions(), pTraits<vector>::zero)
-//         )
-//     );
-
-//     GeometricField<vector, pointPatchField, pointMesh> Vx = tvf();
-
-//     forAll (mesh_.points(), nodeID)
-//     {
-//         Vx[nodeID] = vector(T[nodeID].xx(), T[nodeID].xy(), T[nodeID].xz());
-//     }
-
-//     tvf.clear();
-//     Vx.correctBoundaryConditions();
-
-//     return Vx;
-// }
-
-
-// // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-// pointVectorField operations::decomposeTensorY
-// (
-//     const GeometricField<tensor, pointPatchField, pointMesh>& T
-// ) const
-// {
-
-//     tmp<GeometricField<vector, pointPatchField, pointMesh> > tvf
-//     (
-//         new GeometricField<vector, pointPatchField, pointMesh>
-//         (
-//             IOobject
-//             (
-//                 "dummy",
-//                 mesh_
-//             ),
-//             T.mesh(),
-//             dimensioned<vector>("dummy", T.dimensions(), pTraits<vector>::zero)
-//         )
-//     );
-
-//     GeometricField<vector, pointPatchField, pointMesh> Vy = tvf();
-
-//     forAll (mesh_.points(), nodeID)
-//     {
-//         Vy[nodeID] = vector(T[nodeID].yx(), T[nodeID].yy(), T[nodeID].yz());
-//     }
-
-//     tvf.clear();
-//     Vy.correctBoundaryConditions();
-
-//     return Vy;
-// }
-
-
-// // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-// pointVectorField operations::decomposeTensorZ
-// (
-//     const GeometricField<tensor, pointPatchField, pointMesh>& T
-// ) const
-// {
-
-//     tmp<GeometricField<vector, pointPatchField, pointMesh> > tvf
-//     (
-//         new GeometricField<vector, pointPatchField, pointMesh>
-//         (
-//             IOobject
-//             (
-//                 "dummy",
-//                 mesh_
-//             ),
-//             T.mesh(),
-//             dimensioned<vector>("dummy", T.dimensions(), pTraits<vector>::zero)
-//         )
-//     );
-
-//     GeometricField<vector, pointPatchField, pointMesh> Vz = tvf();
-
-//     forAll (mesh_.points(), nodeID)
-//     {
-//         Vz[nodeID] = vector(T[nodeID].zx(), T[nodeID].zy(), T[nodeID].zz());
-//     }
-
-//     tvf.clear();
-//     Vz.correctBoundaryConditions();
-
-//     return Vz;
-// }
-
+    return TP;
+}
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+void operations::decomposeTensor
+(
+    const GeometricField<tensor, pointPatchField, pointMesh>& T,
+    GeometricField<vector, pointPatchField, pointMesh>& Vx,
+    GeometricField<vector, pointPatchField, pointMesh>& Vy,
+    GeometricField<vector, pointPatchField, pointMesh>& Vz
+) const
+{
+    forAll(mesh_.points(), node)
+    {
+        Vx[node] = vector(T[node].xx(), T[node].xy(), T[node].xz());
+        Vy[node] = vector(T[node].yx(), T[node].yy(), T[node].yz());
+        Vz[node] = vector(T[node].zx(), T[node].zy(), T[node].zz());
+    }
 
+    if (Pstream::parRun())
+    {
+        Vx.correctBoundaryConditions();
+        Vy.correctBoundaryConditions();
+        Vz.correctBoundaryConditions();
+    }
+}
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+pointVectorField operations::decomposeTensorX
+(
+    const GeometricField<tensor, pointPatchField, pointMesh>& T
+) const
+{
+
+    tmp<GeometricField<vector, pointPatchField, pointMesh> > tvf
+    (
+        new GeometricField<vector, pointPatchField, pointMesh>
+        (
+            IOobject
+            (
+                "decomposeTensorX("+T.name()+')',
+                mesh_
+            ),
+            T.mesh(),
+            dimensioned<vector>("0", T.dimensions(), pTraits<vector>::zero)
+        )
+    );
+
+    GeometricField<vector, pointPatchField, pointMesh> Vx = tvf();
+
+    forAll(mesh_.points(), node)
+    {
+        Vx[node] = vector(T[node].xx(), T[node].xy(), T[node].xz());
+    }
+
+    tvf.clear();
+    Vx.correctBoundaryConditions();
+
+    return Vx;
+}
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+pointVectorField operations::decomposeTensorY
+(
+    const GeometricField<tensor, pointPatchField, pointMesh>& T
+) const
+{
+
+    tmp<GeometricField<vector, pointPatchField, pointMesh> > tvf
+    (
+        new GeometricField<vector, pointPatchField, pointMesh>
+        (
+            IOobject
+            (
+                "decomposeTensorY("+T.name()+')',
+                mesh_
+            ),
+            T.mesh(),
+            dimensioned<vector>("0", T.dimensions(), pTraits<vector>::zero)
+        )
+    );
+
+    GeometricField<vector, pointPatchField, pointMesh> Vy = tvf();
+
+    forAll(mesh_.points(), node)
+    {
+        Vy[node] = vector(T[node].yx(), T[node].yy(), T[node].yz());
+    }
+
+    tvf.clear();
+    Vy.correctBoundaryConditions();
+
+    return Vy;
+}
+
+// // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+pointVectorField operations::decomposeTensorZ
+(
+    const GeometricField<tensor, pointPatchField, pointMesh>& T
+) const
+{
+
+    tmp<GeometricField<vector, pointPatchField, pointMesh> > tvf
+    (
+        new GeometricField<vector, pointPatchField, pointMesh>
+        (
+            IOobject
+            (
+                "decomposeTensorZ("+T.name()+')',
+                mesh_
+            ),
+            T.mesh(),
+            dimensioned<vector>("0", T.dimensions(), pTraits<vector>::zero)
+        )
+    );
+
+    GeometricField<vector, pointPatchField, pointMesh> Vz = tvf();
+
+    forAll(mesh_.points(), node)
+    {
+        Vz[node] = vector(T[node].zx(), T[node].zy(), T[node].zz());
+    }
+
+    tvf.clear();
+    Vz.correctBoundaryConditions();
+
+    return Vz;
+}
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 void operations::eigenStructure(const tensor& ten)
 {
     tensor t(ten);
@@ -497,9 +475,7 @@ void operations::eigenStructure(const tensor& ten)
 
 }
 
-
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
 void operations::areaVectors
 (
     const vectorList& x, vector& n, scalar& a
@@ -530,11 +506,46 @@ void operations::areaVectors
     }
 }
 
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+pointScalarField operations::surfaceSum
+(
+    const scalarList& flux
+)
+{
+    tmp<GeometricField<scalar, pointPatchField, pointMesh> > tvf
+    (
+        new GeometricField<scalar, pointPatchField, pointMesh>
+        (
+            IOobject
+            (
+                "surfaceSum()",
+                mesh_
+            ),
+            pMesh_,
+            pTraits<scalar>::zero
+        )
+    );
+    GeometricField<scalar, pointPatchField, pointMesh> rhs = tvf();
+
+    // scalarList rhs(mesh_.edges().size(), vector::zero);
+
+    forAll(mesh_.edges(), edge)
+    {
+        label own = mesh_.edges()[edge][0];
+        label nei = mesh_.edges()[edge][1];
+
+        rhs[own] += flux[edge];
+        rhs[nei] -= flux[edge];
+    }
+
+    tvf.clear();
+
+    return rhs;
+}
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
 // vectorList operations::surfaceIntegrate
-pointVectorField operations::surfaceIntegrate
+pointVectorField operations::surfaceSum
 (
     const vectorList& flux
 )
@@ -546,7 +557,7 @@ pointVectorField operations::surfaceIntegrate
         (
             IOobject
             (
-                "surfaceIntegrate()",
+                "surfaceSum()",
                 mesh_
             ),
             pMesh_,
@@ -573,11 +584,9 @@ pointVectorField operations::surfaceIntegrate
     return rhs;
 }
 
-
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
 // tensorList operations::surfaceIntegrate
-pointTensorField operations::surfaceIntegrate
+pointTensorField operations::surfaceSum
 (
     const tensorList& flux
 ) const
@@ -589,7 +598,7 @@ pointTensorField operations::surfaceIntegrate
         (
             IOobject
             (
-                "surfaceIntegrate()",
+                "surfaceSum()",
                 mesh_
             ),
             pMesh_,
@@ -598,7 +607,6 @@ pointTensorField operations::surfaceIntegrate
         )
     );
     GeometricField<tensor, pointPatchField, pointMesh> rhs = tvf();
-
 
     // tensorList rhs(mesh_.edges().size(), tensor::zero);
 
@@ -616,6 +624,173 @@ pointTensorField operations::surfaceIntegrate
     return rhs;
 }
 
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+pointScalarField operations::surfaceIntegrate
+(
+    const scalarList& flux,
+    const pointScalarField& V
+) const
+{
+    tmp<GeometricField<scalar, pointPatchField, pointMesh> > tvf
+    (
+        new GeometricField<scalar, pointPatchField, pointMesh>
+        (
+            IOobject
+            (
+                "surfaceIntegrate()",
+                mesh_
+            ),
+            pMesh_,
+            pTraits<scalar>::zero
+        )
+    );
+    GeometricField<scalar, pointPatchField, pointMesh> rhs = tvf();
+
+    forAll(mesh_.edges(), edge)
+    {
+        label own = mesh_.edges()[edge][0];
+        label nei = mesh_.edges()[edge][1];
+
+        rhs[own] += flux[edge];
+        rhs[nei] -= flux[edge];
+    }
+
+    forAll(mesh_.points(), node)
+    {
+        rhs[node] = rhs[node]/V[node];
+    }
+
+    tvf.clear();
+
+    return rhs;
+}
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+pointVectorField operations::surfaceIntegrate
+(
+    const vectorList& flux,
+    const pointScalarField& V
+) const
+{
+    tmp<GeometricField<vector, pointPatchField, pointMesh> > tvf
+    (
+        new GeometricField<vector, pointPatchField, pointMesh>
+        (
+            IOobject
+            (
+                "surfaceIntegrate()",
+                mesh_
+            ),
+            pMesh_,
+            pTraits<vector>::zero
+        )
+    );
+    GeometricField<vector, pointPatchField, pointMesh> rhs = tvf();
+
+    forAll(mesh_.edges(), edge)
+    {
+        label own = mesh_.edges()[edge][0];
+        label nei = mesh_.edges()[edge][1];
+
+        rhs[own] += flux[edge];
+        rhs[nei] -= flux[edge];
+    }
+
+    forAll(mesh_.points(), node)
+    {
+        rhs[node] = rhs[node]/V[node];
+    }
+
+    tvf.clear();
+
+    return rhs;
+}
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+pointTensorField operations::surfaceIntegrate
+(
+    const tensorList& flux,
+    const pointScalarField& V
+) const
+{
+    tmp<GeometricField<tensor, pointPatchField, pointMesh> > tvf
+    (
+        new GeometricField<tensor, pointPatchField, pointMesh>
+        (
+            IOobject
+            (
+                "surfaceIntegrate()",
+                mesh_
+            ),
+            pMesh_,
+            pTraits<tensor>::zero
+        )
+    );
+    GeometricField<tensor, pointPatchField, pointMesh> rhs = tvf();
+
+    forAll(mesh_.edges(), edge)
+    {
+        label own = mesh_.edges()[edge][0];
+        label nei = mesh_.edges()[edge][1];
+
+        rhs[own] += flux[edge];
+        rhs[nei] -= flux[edge];
+    }
+
+    forAll(mesh_.points(), node)
+    {
+        rhs[node] = rhs[node]/V[node];
+    }
+
+    tvf.clear();
+
+    return rhs;
+}
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+pointScalarField operations::volumeIntegrate
+(
+    pointScalarField& sum,
+    const pointScalarField& V
+) const
+{
+    forAll(mesh_.points(), node)
+    {
+        sum[node] = sum[node]/V[node];
+    }
+
+    return sum;
+}
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+pointVectorField operations::volumeIntegrate
+(
+    pointVectorField& sum,
+    const pointScalarField& V
+) const
+{
+    forAll(mesh_.points(), node)
+    {
+        sum[node] = sum[node]/V[node];
+    }
+
+    return sum;
+}
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+pointTensorField operations::volumeIntegrate
+(
+    pointTensorField& sum,
+    const pointScalarField& V
+) const
+{
+    forAll(mesh_.points(), node)
+    {
+        sum[node] = sum[node]/V[node];
+    }
+
+    return sum;
+}
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

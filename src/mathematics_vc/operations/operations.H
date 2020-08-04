@@ -113,47 +113,47 @@ public:
             const GeometricField<tensor, pointPatchField, pointMesh>& T
         ) const;
 
-        // // Tensor cross product of a volTensorField with another volTensorField
-        // volTensorField tensorProduct
-        // (
-        //     const GeometricField<tensor, fvPatchField, volMesh>& T1,
-        //     const GeometricField<tensor, fvPatchField, volMesh>& T2
-        // ) const;
+        // Tensor cross product of a pointTensorField with another pointTensorField
+        pointTensorField tensorProduct
+        (
+            const GeometricField<tensor, pointPatchField, pointMesh>& T1,
+            const GeometricField<tensor, pointPatchField, pointMesh>& T2
+        ) const;
 
-        // // Tensor cross product of a tensor with another tensor
-        // tensor tensorProduct
-        // (
-        //     const tensor& T1,
-        //     const tensor& T2
-        // ) const;
+        // Tensor cross product of a tensor with another tensor
+        tensor tensorProduct
+        (
+            const tensor& T1,
+            const tensor& T2
+        ) const;
 
 
-        // // Decompose tensor
-        // void decomposeTensor
-        // (
-        //     const GeometricField<tensor, fvPatchField, volMesh>& T,
-        //     GeometricField<vector, fvPatchField, volMesh>& Vx,
-        //     GeometricField<vector, fvPatchField, volMesh>& Vy,
-        //     GeometricField<vector, fvPatchField, volMesh>& Vz
-        // ) const;
+        // Decompose tensor
+        void decomposeTensor
+        (
+            const GeometricField<tensor, pointPatchField, pointMesh>& T,
+            GeometricField<vector, pointPatchField, pointMesh>& Vx,
+            GeometricField<vector, pointPatchField, pointMesh>& Vy,
+            GeometricField<vector, pointPatchField, pointMesh>& Vz
+        ) const;
 
-        // // Decompose tensor and return X row
-        // pointVectorField decomposeTensorX
-        // (
-        //     const GeometricField<tensor, pointPatchField, pointMesh>& T
-        // ) const;
+        // Decompose tensor and return X row
+        pointVectorField decomposeTensorX
+        (
+            const GeometricField<tensor, pointPatchField, pointMesh>& T
+        ) const;
 
-        // // Decompose tensor and return Y row
-        // pointVectorField decomposeTensorY
-        // (
-        //     const GeometricField<tensor, pointPatchField, pointMesh>& T
-        // ) const;
+        // Decompose tensor and return Y row
+        pointVectorField decomposeTensorY
+        (
+            const GeometricField<tensor, pointPatchField, pointMesh>& T
+        ) const;
 
         // // Decompose tensor and return Z row
-        // pointVectorField decomposeTensorZ
-        // (
-        //     const GeometricField<tensor, pointPatchField, pointMesh>& T
-        // ) const;
+        pointVectorField decomposeTensorZ
+        (
+            const GeometricField<tensor, pointPatchField, pointMesh>& T
+        ) const;
 
         // Computes eigen-values and eigen-vectors
         void eigenStructure(const tensor&);
@@ -164,23 +164,66 @@ public:
             const vectorList&, vector &, scalar&
         ) const;
 
-        // Surface integration for a vectorList
-        // vectorList surfaceIntegrate
-        pointVectorField surfaceIntegrate
+        // Surface sum of a scalarList
+        pointScalarField surfaceSum
+        (
+            const scalarList&
+        );
+
+        // Surface sum of a vectorList
+        pointVectorField surfaceSum
         (
             const vectorList&
         );
 
-        // Surface integration for a tensorList
-        // tensorList surfaceIntegrate
-        pointTensorField surfaceIntegrate
+        // Surface sum for a tensorList
+        pointTensorField surfaceSum
         (
             const tensorList&
         ) const;
+
+        // Surface integration of a scalarList
+        pointScalarField surfaceIntegrate
+        (
+            const scalarList&,
+            const pointScalarField&
+        ) const;
+
+        // Surface integration of a vectorList
+        pointVectorField surfaceIntegrate
+        (
+            const vectorList&,
+            const pointScalarField&
+        ) const;
+
+        // Surface integration of a tensorList
+        pointTensorField surfaceIntegrate
+        (
+            const tensorList&,
+            const pointScalarField&
+        ) const;
+
+        // Volume integration of a scalarField
+        pointScalarField volumeIntegrate
+        (
+            pointScalarField&,
+            const pointScalarField&
+        ) const;
+
+        // Volume integration of a vectorField
+        pointVectorField volumeIntegrate
+        (
+            pointVectorField&,
+            const pointScalarField&
+        ) const;
+
+        // Volume integration of a tensorField
+        pointTensorField volumeIntegrate
+        (
+            pointTensorField&,
+            const pointScalarField&
+        ) const;
 };
-
-
-
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
