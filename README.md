@@ -22,7 +22,7 @@
   <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/jibranhaider/explicitsoliddynamics_vc"> &nbsp;
   <img alt="GitHub code size in bytes" src="https://img.shields.io/github/languages/code-size/jibranhaider/explicitsoliddynamics_vc?color=lightgrey"> &nbsp;
   <img alt="GitHub repo size in bytes" src="https://img.shields.io/github/repo-size/jibranhaider/explicitsoliddynamics_vc?label=Repository%20size&color=lightgrey"> &nbsp;
-  <a href="https://jibranhaider.weebly.com/research.html">
+  <a href="https://jibranhaider.com/research/explicit-solid-dynamics-in-openfoam/">
     <img alt="Website" src="https://img.shields.io/website-up-down-green-red/https/jibranhaider.weebly.com/research.html.svg?label=Website"> 
   </a>  
 </p>
